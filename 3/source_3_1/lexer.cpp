@@ -71,7 +71,9 @@ namespace lexer
             }
 
             // No valid input
-            throw error::SyntaxException("Bad token");
+            std::string msg = "Unexpected token ";
+            msg += ch;
+            throw error::SyntaxException(msg);
         }
     }
 
@@ -119,7 +121,15 @@ namespace lexer
                     continue;
 
                 // Process statement
-                std::cout << parser::Parser::GetInstance().ProcessExpression(false) << '\n';
+                auto result = parser::Parser::GetInstance().ProcessExpression(false);
+                if (GetCurrentToken() != PRINT)
+                {
+                    std::string msg = "Unexpected token ";
+                    msg += char(GetCurrentToken());
+                    throw error::SyntaxException(msg);
+                }
+                else
+                    std::cout << result << '\n';
                 statement_count_++;
             }
             catch (std::exception &e)
